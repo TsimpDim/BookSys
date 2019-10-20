@@ -1,0 +1,16 @@
+
+.text {
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 200;
+    font-size: 1.5em;
+
+    margin: 0;
+    padding: 0;
+
+    color: #323232;
+}
+
+nav {
+    background-color: rgb(145, 189, 255);
+    padding: 0;
+}
