@@ -1,4 +1,10 @@
 {% extends 'layout.html' %}
 {% block body %}
-    <h1 class="text"> Hey </h1>
+    <h1 class="text">books</h1>
+
+    <div>
+        {% for book in books %}
+            <h4>{{book}}</h4>
+        {%endfor%}
+    </div>
 {% endblock %}
