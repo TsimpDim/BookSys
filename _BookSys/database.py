@@ -22,6 +22,9 @@ class Book(db.Model):
     description = db.Column(db.String(120), unique=False, nullable=True)
     quantity = db.Column(db.Integer, default=1)
 
+    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    owner = db.relationship('User', backref=db.backref('books', lazy=True))
+
     def __repr__(self):
         return f'<Book {self.title}>'
 
@@ -47,9 +50,4 @@ class init_db():
 
 
     db.create_all()
-
-    get_or_create(db.session, Book, title="Book 1")
-    get_or_create(db.session, Book, title="Book 2", description="This is book 2")
-    get_or_create(db.session, Book, title="Book 3")
-
-    db.session.commit()
+    get_or_create(db.session, User, username="default", limit="999")

@@ -1,10 +1,40 @@
 {% extends 'layout.html' %}
 {% block body %}
-    <h1 class="text">books</h1>
 
-    <div>
-        {% for book in books %}
-            <h4>{{book}}</h4>
-        {%endfor%}
+    <h1 class="text">add book</h1>
+    <form method="POST" action="/add_book">
+        <input type="text" placeholder="book title" name="title" maxlength="20"/>
+        <input type="text" placeholder="description" name="description" maxlength="120"/>
+        <input type="number" placeholder="quantity" name="quantity"/>
+        <input type="submit" value="add book">
+    </form>
+
+
+    <div style="margin-top: 5em;">
+        <h1 class="text">list</h1>
+        <table class="text">
+            <tr>
+                <th>id</th>
+                <th>title</th>
+                <th>description</th>
+                <th>quantity</th>
+                <th>owner</th>
+            </tr>
+            {% for book in books %}
+                <tr>
+                    <td>{{book.id}}</td>
+                    <td>{{book.title}}</td>
+                    <td>{{book.description}}</td>
+                    <td>{{book.quantity}}</td>
+                    <td>{{book.owner.username}}</td>
+                    <td>
+                        <form method="POST" action="/del_book">
+                            <input type="hidden" name="id" value={{book.id}} />
+                            <input type="submit" value="X" />
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
     </div>
 {% endblock %}
