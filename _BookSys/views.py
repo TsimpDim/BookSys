@@ -1,6 +1,6 @@
 from _BookSys import app
 from _BookSys.database import Book, User, db
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, flash
 
 
 @app.route('/')
@@ -12,7 +12,12 @@ def home():
 def create():
 
     if request.method == 'POST':
-            
+        
+        if not request.form['title']:
+            flash("No title given")
+            return redirect(url_for('home'))
+
+
         b = Book(title=request.form['title'],
          description=request.form['description'],
          quantity=(request.form['quantity'] or None), 
