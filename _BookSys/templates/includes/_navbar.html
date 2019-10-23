@@ -1,11 +1,24 @@
 <nav>
-
   <h1 class="text">booksys</h1>
 
-  <ul class="nav-list">
-    <li class="nav-item">
-      <a href="/" class="text">books</a>
-    </li>
-  </ul>
+  <div class="nav-list">
+      
+      <a href="/" class="text nav-item">books</a>
+
+      {% if session.logged_in != NULL %}
+
+      <form method="POST" action="/logout">
+        <input type="submit" value="logout"/>
+      </form>
+
+      {% else %}
+
+      <form method="POST" action="/logreg">
+        <input type="text" name="username" maxlength="80" placeholder="username"/>
+        <input type="submit" value="login or register" />
+      </form>
+
+      {% endif %}
+  </div>
 
 </nav>

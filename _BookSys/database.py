@@ -37,17 +37,16 @@ class Tracker(db.Model):
     returned_at = db.Column(db.Date)
 
 
-class init_db():
-    def get_or_create(session, model, **kwargs):
-        instance = session.query(model).filter_by(**kwargs).first()
-        if instance:
-            return instance
-        else:
-            instance = model(**kwargs)
-            session.add(instance)
-            session.commit()
-            return instance
+def get_or_create(session, model, **kwargs):
+    instance = session.query(model).filter_by(**kwargs).first()
+    if instance:
+        return instance
+    else:
+        instance = model(**kwargs)
+        session.add(instance)
+        session.commit()
+        return instance
 
-
+def init_db():
     db.create_all()
     get_or_create(db.session, User, username="default", limit="999")
