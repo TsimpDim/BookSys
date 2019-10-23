@@ -22,6 +22,7 @@ def create():
 
         b = Book(title=request.form['title'],
          description=request.form['description'],
+         author=(request.form['author'] or None),
          quantity=(request.form['quantity'] or None), 
          owner=User.query.filter_by(username=session['username']).first())
 

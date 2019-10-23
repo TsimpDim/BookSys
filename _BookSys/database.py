@@ -1,5 +1,5 @@
 from _BookSys import app
-import datetime
+from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://wqzocheexnukrd:c43124bfb829ade0781531a5b5dc6ebbc9c625d433a5bf050e847b33649ec713@ec2-54-246-121-32.eu-west-1.compute.amazonaws.com/d1kl95pboccuhh'
@@ -18,12 +18,13 @@ class User(db.Model):
 class Book(db.Model):
     __tablename__ = 'book'
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(50), unique=False, nullable=False)
+    title = db.Column(db.String(120), unique=False, nullable=False)
+    author = db.Column(db.String(120), unique=False, nullable=True, default="-")
     description = db.Column(db.String(120), unique=False, nullable=True)
     quantity = db.Column(db.Integer, default=1)
-
+    
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    owner = db.relationship('User', backref=db.backref('books', lazy=True))
+    owner = db.relationship('User', backref=db.backref('book', lazy=True))
 
     def __repr__(self):
         return f'<Book {self.title}>'
@@ -33,7 +34,8 @@ class Tracker(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'))
-    borrowed_at = db.Column(db.Date, default=datetime.datetime.now)
+
+    borrowed_at = db.Column(db.Date, default=datetime.now)
     returned_at = db.Column(db.Date)
 
 
