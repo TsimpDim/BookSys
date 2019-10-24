@@ -1,20 +1,33 @@
 {% extends 'layout.html' %}
 {% block body %}
 
-    {% if not session.logged_in == NULL %}
-        <h1 class="text">add book</h1>
-        <form method="POST" action="/add_book">
-            <input type="text" placeholder="book title" name="title" maxlength="120"/>
-            <input type="text" placeholder="author" name="author" maxlength="120"/>
-            <input type="text" placeholder="description" name="description" maxlength="120"/>
-            <input type="number" placeholder="quantity" name="quantity"/>
-            <input type="submit" value="add">
-        </form>
-    {% endif %}
+
+<div style="margin-top: 5em;">
+        <h1 class="text">users</h1>
+        <table class="text">
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>username</th>
+                    <th>limit</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td data-label="id">{{user.id}}</td>
+                        <td data-label="username">{{user.username}}</td>
+                        <td data-label="limit">{{user.limit}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 
 
     <div style="margin-top: 5em;">
-        <h1 class="text">list</h1>
+        <h1 class="text">books</h1>
         <table class="text">
             <thead>
                 <tr>
@@ -48,51 +61,30 @@
                         </td>
                         <td data-label="quantity">{{book.quantity}}</td>
                         <td data-label="owner">{{book.owner.username}}</td>
-                        {% if not session.logged_in == NULL %}
-                            <td data-label="-^-">
-                                {% if book.owner.username == session.username %}
-
-                                <form method="POST" action="/del_book">
-                                    <input type="hidden" name="id" value={{book.id}} />
-                                    <input type="submit" value="X" />
-                                </form>
-
-                                {% else %}
-
-                                <form method="POST" action="/borrow_book">
-                                    <input type="hidden" name="id" value={{book.id}} />
-                                    <input type="submit" value="B" />
-                                </form>
-
-                                {% endif %}
-                            </td>
-                        {% endif %}
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 
-    {% if session.logged_in != NULL and trackers.count() > 0 %}
     <div style="margin-top: 5em;">
-        <h1 class="text">borrowed books</h1>
+        <h1 class="text">trackers</h1>
         <table class="text">
             <thead>
                 <tr>
                     <th>id</th>
+                    <th>user_id</th>
                     <th>book_id</th>
-                    <th>title</th>
                     <th>borrowed_at</th>
                     <th>returned_at</th>
-                    <th>owner</th>
                 </tr>
             </thead>
             <tbody>
                 {% for tracker in trackers %}
                 <tr>
                     <td data-label="id">{{tracker.id}}</td>
+                    <td data-label="user_id">{{tracker.user.id}}</td>
                     <td data-label="book_id">{{tracker.book.id}}</td>
-                    <td data-label="title">{{tracker.book.title}}</td>
                     <td data-label="borrowed_at">{{tracker.borrowed_at}}</td>
                     <td data-label="returned_at">
                         {% if tracker.returned_at %}
@@ -101,19 +93,9 @@
                             -
                         {% endif %}
                     </td>
-                    <td data-label="owner">{{tracker.book.owner.username}}</td>
-                    {% if not tracker.returned_at %}
-                        <td data-label="-^-">
-                            <form method="POST" action="/return_book">
-                                <input type="hidden" name="id" value={{tracker.book.id}} />
-                                <input type="submit" value="R" />
-                            </form>
-                        </td>
-                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
-    {% endif %}
 {% endblock %}

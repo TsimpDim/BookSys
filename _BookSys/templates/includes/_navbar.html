@@ -1,24 +1,31 @@
 <nav>
-  <h1 class="text">booksys</h1>
 
   <div class="nav-list">
-      
+    <h1 class="text">booksys</h1>
+
+    <div>
       <a href="/" class="text nav-item">books</a>
+      {% if session.logged_in != NULL and session.username == "kmarg" %}
+        <a href="/database" class="text nav-item">database</a>
+      {% endif %}
+    </div>
 
       {% if session.logged_in != NULL %}
-      <div>
-        <span class="text">limit: {{session.limit}}</span>
 
-        <form method="POST" action="/logout">
-          <input type="submit" value="logout"/>
-        </form>
-      </div>
+        <div>
+          <span class="text">limit: {{session.limit}}</span>
+
+          <form method="POST" action="/logout">
+            <input type="submit" value="logout"/>
+          </form>
+        </div>
+
       {% else %}
 
-      <form method="POST" action="/logreg">
-        <input type="text" name="username" maxlength="80" placeholder="username"/>
-        <input type="submit" value="login or register" />
-      </form>
+        <form method="POST" action="/logreg">
+          <input type="text" name="username" maxlength="80" placeholder="username"/>
+          <input type="submit" value="login or register" />
+        </form>
 
       {% endif %}
   </div>

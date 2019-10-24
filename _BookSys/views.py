@@ -13,6 +13,19 @@ def home():
     else:
         return render_template('home.html', books=books)
 
+@app.route('/database')
+def database():
+
+    if session.get('logged_in') and session['username'] == "kmarg":
+
+        users = User.query.all()
+        books = Book.query.all()
+        trackers = Tracker.query.all()
+        
+        return render_template('database.html', users=users, books=books, trackers=trackers)
+    else:
+        return redirect(url_for('home'))
+
 @app.route('/logreg', methods=['POST'])
 def logreg():
 
