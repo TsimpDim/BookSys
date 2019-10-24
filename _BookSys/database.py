@@ -19,7 +19,7 @@ class Book(db.Model):
     __tablename__ = 'book'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), unique=False, nullable=False)
-    author = db.Column(db.String(120), unique=False, nullable=True, default="-")
+    author = db.Column(db.String(120), unique=False, nullable=True)
     description = db.Column(db.String(120), unique=False, nullable=True)
     quantity = db.Column(db.Integer, default=1)
     
@@ -34,6 +34,9 @@ class Tracker(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'))
+
+    user = db.relationship('User', backref=db.backref('trackers'))
+    book = db.relationship('Book', backref=db.backref('trackers'))
 
     borrowed_at = db.Column(db.Date, default=datetime.now)
     returned_at = db.Column(db.Date)

@@ -6,11 +6,13 @@
       <a href="/" class="text nav-item">books</a>
 
       {% if session.logged_in != NULL %}
+      <div>
+        <span class="text">limit: {{session.limit}}</span>
 
-      <form method="POST" action="/logout">
-        <input type="submit" value="logout"/>
-      </form>
-
+        <form method="POST" action="/logout">
+          <input type="submit" value="logout"/>
+        </form>
+      </div>
       {% else %}
 
       <form method="POST" action="/logreg">

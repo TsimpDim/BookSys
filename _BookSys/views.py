@@ -1,11 +1,41 @@
 from _BookSys import app
-from _BookSys.database import Book, User, db, get_or_create
+from _BookSys.database import Book, User, Tracker, db, get_or_create
 from flask import render_template, request, redirect, url_for, flash, session
+from datetime import datetime
 
 @app.route('/')
 def home():
-    books = Book.query.all()
-    return render_template('home.html', books=books)
+    books = Book.query.order_by(Book.id.asc())
+
+    if session.get('logged_in'):
+        borrowed = Tracker.query.filter_by(user_id=session['id']).order_by(Tracker.id.asc())
+        return render_template('home.html', books=books, trackers=borrowed)
+    else:
+        return render_template('home.html', books=books)
+
+@app.route('/logreg', methods=['POST'])
+def logreg():
+
+    if request.method == 'POST' and not hasattr(session, 'logged_in'):
+        usrnm = request.form['username']
+
+        user = get_or_create(db.session, User, username=usrnm)
+
+        session['logged_in'] = True
+        session['username'] = user.username
+        session['limit'] = user.limit
+        session['id'] = user.id
+        print(session['username'])
+        return redirect(url_for('home'))
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    # Check if user is not logged out
+    if session.get('logged_in'):
+        session.clear()
+        return redirect(url_for('home'))
+    else:
+        return redirect(url_for('home'))
 
 @app.route('/add_book', methods=['POST'])
 def create():
@@ -36,28 +66,86 @@ def delete():
 
     if request.method == 'POST':
             
-        b = Book.query.filter_by(id=request.form['id'])
-        b.delete()
-        db.session.commit()
+        b = Book.query.filter_by(id=request.form['id']).first()
 
-        return redirect(url_for('home'))
+        if session.get('logged_in'):
+            if b.owner.username == session['username']:
+                b.delete()
+                db.session.commit()
+            else:
+                flash("No ownership over book")
+                return redirect(url_for('home'))
+        else:
+            flash("Not logged in")
+            return redirect(url_for('home'))
 
-@app.route('/logreg', methods=['POST'])
-def logreg():
+    return redirect(url_for('home'))
 
-    if request.method == 'POST' and not hasattr(session, 'logged_in'):
-        usrnm = request.form['username']
 
-        session['logged_in'] = True
-        session['username'] = get_or_create(db.session, User, username=usrnm).username
-        print(session['username'])
-        return redirect(url_for('home'))
+@app.route('/borrow_book', methods=['POST'])
+def borrow_book():
 
-@app.route('/logout', methods=['POST'])
-def logout():
-    # Check if user is not logged out
-    if session.get('logged_in'):
-        session.clear()
-        return redirect(url_for('home'))
-    else:
-        return redirect(url_for('home'))
+    if request.method == 'POST':
+            
+        b = Book.query.filter_by(id=request.form['id']).first()
+
+        if session.get('logged_in'):
+            if b.owner.username == session['username']:
+                flash("You have ownership over book")
+                return redirect(url_for('home'))
+            else:
+                u = User.query.filter_by(id=session['id']).first()
+
+                if u.limit == 0:
+                    flash("Borrowing quota 100%, return some books")
+                    return redirect(url_for('home'))
+
+                if Tracker.query.filter_by(user_id=u.id, book_id=b.id, returned_at=None).count() > 0:
+                    flash("You have already borrowed this book")
+                    return redirect(url_for('home'))
+
+
+                t = Tracker(book_id=b.id, user_id=u.id)
+
+                u.limit -= 1
+                b.quantity -= 1
+                session['limit'] -= 1
+                db.session.add(t)
+                db.session.commit()
+        else:
+            flash("Not logged in")
+            return redirect(url_for('home'))
+
+    return redirect(url_for('home'))
+
+@app.route('/return_book', methods=['POST'])
+def return_book():
+
+    if request.method == 'POST':
+            
+        b = Book.query.filter_by(id=request.form['id']).first()
+
+        if session.get('logged_in'):
+            if b.owner.username == session['username']:
+                flash("You have ownership over book")
+                return redirect(url_for('home'))
+            else:
+                u = User.query.filter_by(id=session['id']).first()
+                t = Tracker.query.filter_by(book_id=b.id, user_id=u.id).order_by(Tracker.id.desc()).first()
+                
+
+                if u.limit >= 3:
+                    flash('Something went wrong')
+                else:
+                    u.limit += 1
+                    session['limit'] += 1
+
+                b.quantity += 1
+                t.returned_at = datetime.now()
+
+                db.session.commit()
+        else:
+            flash("Not logged in")
+            return redirect(url_for('home'))
+
+    return redirect(url_for('home'))
