@@ -83,7 +83,7 @@ def delete():
 
         if session.get('logged_in'):
             if b.owner.username == session['username']:
-                b.delete()
+                db.session.delete(b)
                 db.session.commit()
             else:
                 flash("No ownership over book")
@@ -135,8 +135,20 @@ def borrow_book():
 def return_book():
 
     if request.method == 'POST':
-            
+
         b = Book.query.filter_by(id=request.form['id']).first()
+
+        if not b:
+            # Object has been deleted
+            # Add new instance with borrowee as owner
+            new_book = Book(title=request.form['title'],
+             author=(request.form['author'] or None),
+             owner=User.query.filter_by(username=session['username']).first()
+            )
+
+            db.session.add(new_book)
+            db.session.commit()
+
 
         if session.get('logged_in'):
             if b.owner.username == session['username']:

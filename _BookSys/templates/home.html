@@ -105,6 +105,8 @@
                     {% if not tracker.returned_at %}
                         <td data-label="-^-">
                             <form method="POST" action="/return_book">
+                                <input type="hidden" name="title" value={{tracker.book.title}} />
+                                <input type="hidden" name="author" value={{tracker.book.author}} />
                                 <input type="hidden" name="id" value={{tracker.book.id}} />
                                 <input type="submit" value="R" />
                             </form>
