@@ -63,6 +63,10 @@ def create():
             flash("Not logged in")
             return redirect(url_for('home'))
 
+        if request.form['quantity'] and int(request.form['quantity']) < 0:
+            flash("Quantity cannot be negative")
+            return redirect(url_for('home'))
+
         b = Book(title=request.form['title'],
          description=request.form['description'],
          author=(request.form['author'] or None),
@@ -137,18 +141,30 @@ def return_book():
     if request.method == 'POST':
 
         b = Book.query.filter_by(id=request.form['id']).first()
+        u = User.query.filter_by(id=session['id']).first()
 
         if not b:
             # Object has been deleted
             # Add new instance with borrowee as owner
             new_book = Book(title=request.form['title'],
              author=(request.form['author'] or None),
-             owner=User.query.filter_by(username=session['username']).first()
+             owner=u
             )
 
             db.session.add(new_book)
-            db.session.commit()
 
+            t = Tracker.query.filter_by(user_id=u.id).filter_by(book_id=None).order_by(Tracker.id.desc()).first()
+            t.book = new_book
+
+            if u.limit >= 3:
+                flash('Something went wrong')
+            else:
+                u.limit += 1
+                session['limit'] += 1
+
+            t.returned_at = datetime.now()
+            db.session.commit()
+            return redirect(url_for('home'))
 
         if session.get('logged_in'):
             if b.owner.username == session['username']:

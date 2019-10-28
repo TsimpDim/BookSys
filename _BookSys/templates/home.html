@@ -7,7 +7,7 @@
             <input type="text" placeholder="book title" name="title" maxlength="120"/>
             <input type="text" placeholder="author" name="author" maxlength="120"/>
             <input type="text" placeholder="description" name="description" maxlength="120"/>
-            <input type="number" placeholder="quantity" name="quantity"/>
+            <input type="number" placeholder="quantity" name="quantity" min="0"/>
             <input type="submit" value="add">
         </form>
     {% endif %}
@@ -101,7 +101,14 @@
                             -
                         {% endif %}
                     </td>
-                    <td data-label="owner">{{tracker.book.owner.username}}</td>
+                    
+                    <td data-label="owner">
+                    {% if not tracker.book|attr(owner) %}
+                        {{tracker.book.owner.username}}
+                    {% else %}
+                        < user has deleted their post >
+                    {% endif %}
+                    </td>
                     {% if not tracker.returned_at %}
                         <td data-label="-^-">
                             <form method="POST" action="/return_book">
