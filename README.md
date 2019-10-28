@@ -3,7 +3,7 @@
 https://distrsys.herokuapp.com/
 
 
-````
+```
 |-- _BookSys
 |   |-- database.py
 |   |-- __init__.py
@@ -23,11 +23,11 @@ https://distrsys.herokuapp.com/
 `-- requirements.txt
 ```
 
-`database.py` = λογική ΒΔ (ORM)
-`static/g_styles.css` = αρχείο(α) `.css` 
-`templates/*` = `html` αρχεία του front-end
-`templates/includes/_*` = μικρά κομμάτια `html` που χρησιμοποιούνται (γίνονται "include") στα υπόλοιπα
-`views.py` = το αρχείο με τη λογική του API / back-end
+`database.py` = λογική ΒΔ (ORM)  
+`static/g_styles.css` = αρχείο(α) `.css`  
+`templates/*` = `html` αρχεία του front-end  
+`templates/includes/_*` = μικρά κομμάτια `html` που χρησιμοποιούνται (γίνονται "include") στα υπόλοιπα  
+`views.py` = το αρχείο με τη λογική του API / back-end  
 
 Χαρακτηριστικά πρότζεκτ:
 * PostgreSQL (remote)
