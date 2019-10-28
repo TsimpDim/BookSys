@@ -2,9 +2,35 @@
 
 https://distrsys.herokuapp.com/
 
+
+````
+|-- _BookSys
+|   |-- database.py
+|   |-- __init__.py
+|   |-- static
+|   |   `-- g_styles.css
+|   |-- templates
+|   |   |-- database.html
+|   |   |-- home.html
+|   |   |-- includes
+|   |   |   |-- _messages.html
+|   |   |   `-- _navbar.html
+|   |   `-- layout.html
+|   `-- views.py
+|-- Makefile
+|-- Procfile
+|-- README.md
+`-- requirements.txt
+```
+
+`database.py` = λογική ΒΔ (ORM)
+`static/g_styles.css` = αρχείο(α) `.css` 
+`templates/*` = `html` αρχεία του front-end
+`templates/includes/_*` = μικρά κομμάτια `html` που χρησιμοποιούνται (γίνονται "include") στα υπόλοιπα
+`views.py` = το αρχείο με τη λογική του API / back-end
+
 Χαρακτηριστικά πρότζεκτ:
-* PostgreSQL
-* Απομακρυσμένη DB
+* PostgreSQL (remote)
 * Python3/Flask
 * SQLALchemy (ORM)
 * Jinja2 (templates)
