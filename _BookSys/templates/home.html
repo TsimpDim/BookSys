@@ -101,14 +101,7 @@
                             -
                         {% endif %}
                     </td>
-                    
-                    <td data-label="owner">
-                    {% if not tracker.book|attr(owner) %}
-                        {{tracker.book.owner.username}}
-                    {% else %}
-                        < user has deleted their post >
-                    {% endif %}
-                    </td>
+                    <td data-label="owner">{{tracker.book.owner.username}}</td>
                     {% if not tracker.returned_at %}
                         <td data-label="-^-">
                             <form method="POST" action="/return_book">

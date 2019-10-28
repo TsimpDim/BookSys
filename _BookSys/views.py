@@ -8,8 +8,12 @@ def home():
     books = Book.query.order_by(Book.id.asc())
 
     if session.get('logged_in'):
-        borrowed = Tracker.query.filter_by(user_id=session['id']).order_by(Tracker.id.asc())
-        return render_template('home.html', books=books, trackers=borrowed)
+        trackers = Tracker.query.filter_by(user_id=session['id']).order_by(Tracker.id.asc())
+        u = User.query.filter_by(id=session['id']).first()
+        borrowed = Tracker.query.filter_by(user_id=u.id, returned_at=None).count()
+        limit = u.limit
+
+        return render_template('home.html', books=books, trackers=trackers, borrowed=borrowed, limit=limit)
     else:
         return render_template('home.html', books=books)
 
@@ -36,9 +40,7 @@ def logreg():
 
         session['logged_in'] = True
         session['username'] = user.username
-        session['limit'] = user.limit
         session['id'] = user.id
-        print(session['username'])
         return redirect(url_for('home'))
 
 @app.route('/logout', methods=['POST'])
@@ -113,7 +115,7 @@ def borrow_book():
             else:
                 u = User.query.filter_by(id=session['id']).first()
 
-                if u.limit == 0:
+                if Tracker.query.filter_by(user_id=u.id, returned_at=None).count() == u.limit:
                     flash("Borrowing quota 100%, return some books")
                     return redirect(url_for('home'))
 
@@ -124,9 +126,7 @@ def borrow_book():
 
                 t = Tracker(book_id=b.id, user_id=u.id)
 
-                u.limit -= 1
                 b.quantity -= 1
-                session['limit'] -= 1
                 db.session.add(t)
                 db.session.commit()
         else:
@@ -153,16 +153,10 @@ def return_book():
 
             db.session.add(new_book)
 
-            t = Tracker.query.filter_by(user_id=u.id).filter_by(book_id=None).order_by(Tracker.id.desc()).first()
+            t = Tracker.query.filter_by(user_id=u.id, book_id=None).order_by(Tracker.id.desc()).first()
             t.book = new_book
-
-            if u.limit >= 3:
-                flash('Something went wrong')
-            else:
-                u.limit += 1
-                session['limit'] += 1
-
             t.returned_at = datetime.now()
+
             db.session.commit()
             return redirect(url_for('home'))
 
@@ -173,15 +167,10 @@ def return_book():
             else:
                 u = User.query.filter_by(id=session['id']).first()
                 t = Tracker.query.filter_by(book_id=b.id, user_id=u.id).order_by(Tracker.id.desc()).first()
-                
-
-                if u.limit >= 3:
-                    flash('Something went wrong')
-                else:
-                    u.limit += 1
-                    session['limit'] += 1
 
                 b.quantity += 1
+                
+
                 t.returned_at = datetime.now()
 
                 db.session.commit()

@@ -13,7 +13,8 @@
       {% if session.logged_in != NULL %}
 
         <div>
-          <span class="text">limit: {{session.limit}}</span>
+          <div class="text">borrowed: {{borrowed}}</div>
+          <div class="text">limit: {{limit}}</div>
 
           <form method="POST" action="/logout">
             <input type="submit" value="logout"/>
