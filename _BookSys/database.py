@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from flask_sqlalchemy import SQLAlchemy
 
 #LOCALHOST: app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:@localhost/BookSys'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://postgres:@localhost/BookSys'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql+psycopg2://wqzocheexnukrd:c43124bfb829ade0781531a5b5dc6ebbc9c625d433a5bf050e847b33649ec713@ec2-54-246-121-32.eu-west-1.compute.amazonaws.com/d1kl95pboccuhh'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 

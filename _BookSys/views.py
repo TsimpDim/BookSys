@@ -25,8 +25,10 @@ def database():
         users = User.query.all()
         books = Book.query.all()
         trackers = Tracker.query.all()
-        
-        return render_template('database.html', users=users, books=books, trackers=trackers)
+        u = User.query.filter_by(id=session['id']).first()
+        borrowed = Tracker.query.filter_by(user_id=u.id, returned_at=None).count()
+        limit = u.limit
+        return render_template('database.html', users=users, books=books, trackers=trackers, borrowed=borrowed, limit = limit)
     else:
         return redirect(url_for('home'))
 
