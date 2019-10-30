@@ -1,15 +1,9 @@
 from _BookSys import app
 from _BookSys.database import Book, User, Tracker, db, get_or_create
-from flask import render_template, request, redirect, url_for, flash, session
+from flask import render_template, request, redirect, url_for, flash, session, Response
 from datetime import datetime
-from jsonrpcserver import method, dispatch
-
-@app.route("/rpc/", methods=["POST"])
-def index():
-    req = request.get_data().decode()
-    response = dispatch(req)
-    return Response(str(response), response.http_status, mimetype="application/json")
-
+from jsonrpc.backend.flask import api
+import json
 
 @app.route('/')
 def home():
@@ -40,29 +34,27 @@ def database():
     else:
         return redirect(url_for('home'))
 
-@method
-def logreg(**kwargs):
+@api.dispatcher.add_method
+def logreg(username):
 
     if not hasattr(session, 'logged_in'):
-        usrnm = kwargs['username']
-
-        user = get_or_create(db.session, User, username=usrnm)
+        user = get_or_create(db.session, User, username=username)
 
         session['logged_in'] = True
         session['username'] = user.username
         session['id'] = user.id
-        return redirect(url_for('home'))
+        flash("Logged in")
     else:
-        return "Not logged in"
+        flash("Already logged in")
 
 
-@method
+@api.dispatcher.add_method
 def logout():
     session.clear()
-    return "Logged out"
+    flash("Logged out")
 
-@method
-def addbook(**kwargs):
+@api.dispatcher.add_method
+def addbook(title, description, author, quantity):
         
     if not kwargs['title']:
         flash("No title given")
@@ -87,7 +79,7 @@ def addbook(**kwargs):
 
     return "Added book"
 
-@method
+@api.dispatcher.add_method
 def delete(**kwargs):
             
     b = Book.query.filter_by(id=kwargs['id']).first()
@@ -102,7 +94,7 @@ def delete(**kwargs):
         return "Not logged in"
 
 
-@method
+@api.dispatcher.add_method
 def borrow_book(**kwargs):
 
     b = Book.query.filter_by(id=kwargs['id']).first()
@@ -129,7 +121,7 @@ def borrow_book(**kwargs):
         return "Not logged in"
 
 
-@method
+@api.dispatcher.add_method
 def return_book(**kwargs):
 
     b = Book.query.filter_by(id=kwargs['id']).first()

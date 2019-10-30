@@ -16,17 +16,15 @@
           <div class="text">borrowed: {{borrowed}}</div>
           <div class="text">limit: {{limit}}</div>
 
-          <form method="POST" action="/logout">
-            <input type="submit" value="logout"/>
-          </form>
+          <button onclick="logout()">logout</button>
         </div>
 
       {% else %}
 
-        <form method="POST" action="/logreg">
+        <div>
           <input type="text" name="username" maxlength="80" placeholder="username"/>
-          <input type="submit" value="login or register" />
-        </form>
+          <button onclick="logreg()" >login or register</button>
+        </div>
 
       {% endif %}
   </div>
