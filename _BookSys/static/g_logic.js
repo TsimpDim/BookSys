@@ -30,3 +30,24 @@ function logreg(){
 function logout(){
     make_rpc_req("logout");
 }
+
+function addBook(){
+    let title = document.getElementsByName("title")[0].value;
+    let author = document.getElementsByName("author")[0].value;
+    let description = document.getElementsByName("description")[0].value;
+    let quantity = document.getElementsByName("quantity")[0].value;
+
+    make_rpc_req("addbook", [title, author, description, quantity]);
+}
+
+function deleteBook(id){
+    make_rpc_req("delete", [id]);
+}
+
+function borrowBook(id){
+    make_rpc_req("borrow_book", [id]);
+}
+
+function returnBook(id, title, author){
+    make_rpc_req("return_book", [id, title, author]);
+}

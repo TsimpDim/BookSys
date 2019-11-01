@@ -43,6 +43,7 @@ def logreg(username):
         session['logged_in'] = True
         session['username'] = user.username
         session['id'] = user.id
+
         flash("Logged in")
     else:
         flash("Already logged in")
@@ -56,7 +57,7 @@ def logout():
 @api.dispatcher.add_method
 def addbook(title, description, author, quantity):
         
-    if not kwargs['title']:
+    if not title:
         flash("No title given")
         return redirect(url_for('home'))
 
@@ -64,44 +65,49 @@ def addbook(title, description, author, quantity):
         flash("Not logged in")
         return redirect(url_for('home'))
 
-    if kwargs['quantity'] and int(kwargs['quantity']) < 0:
+    if quantity and int(quantity) < 0:
         flash("Quantity cannot be negative")
         return redirect(url_for('home'))
 
-    b = Book(title=kwargs['title'],
-        description=kwargs['description'],
-        author=(kwargs['author'] or None),
-        quantity=(kwargs['quantity'] or None), 
+    b = Book(title=title.strip(),
+        description=description.strip(),
+        author=(author.strip() or None),
+        quantity=(quantity.strip() or None), 
         owner=User.query.filter_by(username=session['username']).first())
 
     db.session.add(b)
     db.session.commit()
 
+    flash("Added book")
     return "Added book"
 
 @api.dispatcher.add_method
-def delete(**kwargs):
+def delete(book_id):
             
-    b = Book.query.filter_by(id=kwargs['id']).first()
+    b = Book.query.filter_by(id=int(book_id)).first()
 
     if session.get('logged_in'):
+        print(b.owner.username)
         if b.owner.username == session['username']:
             db.session.delete(b)
             db.session.commit()
         else:
+            flash("No owneship over book")
             return "No ownership over book"
     else:
+        flash("Not logged in")
         return "Not logged in"
 
 
 @api.dispatcher.add_method
-def borrow_book(**kwargs):
+def borrow_book(book_id):
 
-    b = Book.query.filter_by(id=kwargs['id']).first()
+    b = Book.query.filter_by(id=book_id).first()
 
     if session.get('logged_in'):
         if b.owner.username == session['username']:
-            return "You have ownership over book"
+            flash("You have ownership over book")
+            return 
         else:
             u = User.query.filter_by(id=session['id']).first()
 
@@ -118,20 +124,21 @@ def borrow_book(**kwargs):
             db.session.add(t)
             db.session.commit()
     else:
+        flash("Not logged in")
         return "Not logged in"
 
 
 @api.dispatcher.add_method
-def return_book(**kwargs):
+def return_book(book_id, title, author):
 
-    b = Book.query.filter_by(id=kwargs['id']).first()
+    b = Book.query.filter_by(id=book_id).first()
     u = User.query.filter_by(id=session['id']).first()
 
     if not b:
         # Object has been deleted
         # Add new instance with borrowee as owner
-        new_book = Book(title=kwargs['title'],
-            author=(kwargs['author'] or None),
+        new_book = Book(title=title,
+            author=(author or None),
             owner=u
         )
 
@@ -142,10 +149,12 @@ def return_book(**kwargs):
         t.returned_at = datetime.now()
 
         db.session.commit()
+        flash("Returned book")
         return "Returned book"
 
     if session.get('logged_in'):
         if b.owner.username == session['username']:
+            flash("You have ownership over book")
             return "You have ownership over book"
         else:
             u = User.query.filter_by(id=session['id']).first()
@@ -157,7 +166,9 @@ def return_book(**kwargs):
             t.returned_at = datetime.now()
 
             db.session.commit()
+            flash("Returned book")
             return "Returned book"
     else:
+        flash("Not logged in")
         return "Not logged in"
 
