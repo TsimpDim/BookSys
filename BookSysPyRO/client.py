@@ -1,6 +1,6 @@
 import Pyro4
 
-uri = input("Enter the uri of the warehouse: ").strip()
+uri = input("Enter the uri of the booksys: ").strip()
 booksys = Pyro4.Proxy(uri)
 logged_in = False
 
@@ -13,12 +13,18 @@ while(True):
         print(res)
         logged_in = True
 
+    elif inp[0] == "unauth":
+        res = booksys.logout()
+        print(res)
+        logged_in = False
+
     elif inp[0] == "list":
         if inp[1] == "books":
             res = booksys.list_books()
             
+            print("{i} {t:35} {a:20} {d:60} {q}".format(i="id", t="title", a="author", d="description", q="quantity"))
             for book in res:
-                print("[{id}] T|{title:35} A|{author:20} D|{description:60} Q|{quantity}".format(**book))
+                print("[{id}] {title:35} {author:20} {description:60} {quantity}".format(**book))
 
         elif inp[1] == "trackers":
             res = booksys.list_trackers()
@@ -41,7 +47,20 @@ while(True):
             )
 
             print(res)
-    
+
+    elif inp[:2] == ["delete", "book"]:
+        if len(inp) == 2:
+            print("No book_id specified. Command is `delete book <book_id>`")
+
+        if not logged_in:
+            print("You need to login. Use `auth <username>`")
+        else:
+            id = int(inp[2])
+
+            res = booksys.delete_book(id)
+            
+            print(res)
+
     elif inp == ["quit"]:
         exit()
 

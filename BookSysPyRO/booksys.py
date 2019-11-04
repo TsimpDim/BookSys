@@ -20,8 +20,16 @@ class BookSys(object):
 
         self.user_session['logged_in'] = True
         self.user_session['user_id'] = u.id
+        self.user_session['username'] = u.username
 
-        return "Logged in successfully"
+        return "Logged in successfully\n"
+
+    def logout(self):
+        self.user_session['logged_in'] = False
+        self.user_session['user_id'] = None
+        self.user_session['username'] = None
+
+        return "You are now logged out\n"
 
     def list_books(self):
         return [r.as_dict() for r in self.db_session.query(Book).all()]
@@ -31,6 +39,13 @@ class BookSys(object):
 
     def add_book(self, title, author, description, quantity):
         if self.user_session['logged_in']:
+
+            if quantity < 0:
+                return "Quantity cannot be negative\n"
+            
+            if any(len(i) > 120 for i in [title, author, description]):
+                return "Fields must have max. 120 characters\n"
+
             b = Book(
                 title=title,
                 author=author,
@@ -44,9 +59,23 @@ class BookSys(object):
             self.db_session.add(b)
             self.db_session.commit()
 
-            return "Book added"
+            return "Book added\n"
         else:
-            return "You need to login. Use `auth <username>`"
+            return "You need to login. Use `auth <username>`\n"
+
+    def delete_book(self, book_id):
+        b = self.db_session.query(Book).filter_by(id=book_id).first()
+
+        if self.user_session['logged_in']:
+            if b.owner.username == self.user_session['username']:
+                self.db_session.delete(b)
+                self.db_session.commit()
+
+                return "Book deleted.\n"
+            else:
+                return "You are not the owner of this book\n"
+        else:
+            return "You need to login. Use `auth <username>`\n"
 
 def main():
     bs = BookSys()
