@@ -21,10 +21,11 @@ while(True):
     elif inp[0] == "list":
         if inp[1] == "books":
             res = booksys.list_books()
-            
-            print("{i} {t:35} {a:20} {d:60} {q}".format(i="id", t="title", a="author", d="description", q="quantity"))
+
+            print("{i} {t:35} {a:20} {d:60} {q:5} {o:5}".format(i="id", t="title", a="author", d="description", q="quantity", o="owner"))
             for book in res:
-                print("[{id}] {title:35} {author:20} {description:60} {quantity}".format(**book))
+                print("[{id}] {title:35} {author:20} {description:60} {quantity:5} {owner_id:5}".format(**book))
+            print("\n")
 
         elif inp[1] == "trackers":
             if not logged_in:
@@ -38,12 +39,14 @@ while(True):
                 print("{i:10} {u_i:10} {b_i:10} {b_a:15} {r_a:10}".format(i="id", u_i="user_id", b_i="book_id", b_a="borrowed_at", r_a="returned_at"))
                 for t in res:
                     print("{id:<10} {user_id:<10} {book_id:<10} {borrowed_at:15} {returned_at:10}".format(**t))    
+                print('\n')
 
         elif inp[1] == "info":
             if not logged_in:
                 print("You need to login. Use `auth <username>`\n")
             else:
-                print(booksys.list_info())
+                res = booksys.list_info()
+                print(f"Borrowed: {res['borrowed']}\nLimit: {res['limit']}\n")
 
         elif inp[1] == "commands":
             print("Available commands:")

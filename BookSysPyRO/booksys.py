@@ -34,9 +34,10 @@ class BookSys(object):
 
     def list_info(self):
         if self.user_session['logged_in']:
+            u = self.db_session.query(User).filter_by(id=self.user_session['user_id']).first()
             return {
                 "borrowed": self.db_session.query(Tracker).filter_by(user_id=u.id, returned_at=None).count(),
-                "limit": self.db_session.query(User).filter_by(id=self.user_session['user_id']).first().limit
+                "limit": u.limit
             }
         else:
             return "You need to login. Use `auth <username>`\n"
@@ -103,10 +104,10 @@ class BookSys(object):
                     return "Borrowing quota 100%, return some books\n"
 
                 if self.db_session.query(Tracker).filter_by(user_id=u.id, book_id=b.id, returned_at=None).count() > 0:
-                    return "You have already borrowed this book"
+                    return "You have already borrowed this book\n"
 
                 if b.quantity == 0:
-                    return "There are no copies left :("
+                    return "There are no copies left :(\n"
 
                 t = Tracker(book_id=b.id, user_id=u.id)
 
@@ -114,7 +115,7 @@ class BookSys(object):
                 self.db_session.add(t)
                 self.db_session.commit()
 
-                return "Borrowed book"
+                return "Borrowed book\n"
         else:
             return "You need to login. Use `auth <username>`\n"
 
