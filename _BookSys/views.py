@@ -125,6 +125,10 @@ def borrow_book():
                     flash("You have already borrowed this book")
                     return redirect(url_for('home'))
 
+                if b.quantity == 0:
+                    flash("There are no copies left :(")
+                    return redirect(url_for('home'))
+
 
                 t = Tracker(book_id=b.id, user_id=u.id)
 
