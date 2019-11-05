@@ -28,7 +28,7 @@ while(True):
 
         elif inp[1] == "trackers":
             if not logged_in:
-                print("You need to login. Use `auth <username>`")
+                print("You need to login. Use `auth <username>`\n")
             else:
                 res = booksys.list_trackers()
 
@@ -41,7 +41,7 @@ while(True):
 
         elif inp[1] == "info":
             if not logged_in:
-                print("You need to login. Use `auth <username>`")
+                print("You need to login. Use `auth <username>`\n")
             else:
                 print(booksys.list_info())
 
@@ -57,7 +57,7 @@ while(True):
 
     elif inp == ["add", "book"]:
         if not logged_in:
-            print("You need to login. Use `auth <username>`")
+            print("You need to login. Use `auth <username>`\n")
         else:
             title = input("Title: ").strip()
             author = input("Author: ").strip()
@@ -75,10 +75,10 @@ while(True):
 
     elif inp[:2] == ["delete", "book"]:
         if len(inp) == 2:
-            print("No book_id specified. Command is `delete book <book_id>`")
+            print("No book_id specified. Command is `delete book <book_id>`\n")
 
         if not logged_in:
-            print("You need to login. Use `auth <username>`")
+            print("You need to login. Use `auth <username>`\n")
         else:
             id = int(inp[2])
 
@@ -87,10 +87,10 @@ while(True):
 
     elif inp[:2] == ["borrow", "book"]:
         if len(inp) == 2:
-            print("No book_id specified. Command is `borrow book <book_id>`")
+            print("No book_id specified. Command is `borrow book <book_id>`\n")
 
         if not logged_in:
-            print("You need to login. Use `auth <username>`")
+            print("You need to login. Use `auth <username>`\n")
         else:
             id = int(inp[2])
 
@@ -99,10 +99,10 @@ while(True):
 
     elif inp[:2] == ["return", "book"]:
         if len(inp) == 2:
-            print("No book_id specified. Command is `borrow book <book_id>`")
+            print("No book_id specified. Command is `borrow book <book_id>`\n")
 
         if not logged_in:
-            print("You need to login. Use `auth <username>`")
+            print("You need to login. Use `auth <username>`\n")
         else:
             id = int(inp[2])
 
@@ -113,5 +113,5 @@ while(True):
         exit()
 
     else:
-        print("Use command 'list commands' to see all available commands")
+        print("Use command 'list commands' to see all available commands\n")
 
