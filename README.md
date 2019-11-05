@@ -1,9 +1,3 @@
 # BookSys
 
-Εντολές:
-
-* `list books`
-* `list trackers`
-* `auth <usrnm>`
-* `quit`
-* `add book`
+Για τις εντολές δώστε `list commands`
