@@ -64,7 +64,17 @@ class Tracker(Base):
     returned_at = Column(Date)
 
     def as_dict(self):
-        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+        as_dict =  {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+        if isinstance(as_dict, list): 
+            for d in as_dict:
+                d['borrowed_at'] = d['borrowed_at'].strftime("%Y-%m-%d")
+                if d['returned_at']: d['returned_at'] = d['returned_at'].strftime("%Y-%m-%d")
+        else:
+                as_dict['borrowed_at'] = as_dict['borrowed_at'].strftime("%Y-%m-%d")
+                if as_dict['returned_at']: as_dict['returned_at'] = as_dict['returned_at'].strftime("%Y-%m-%d")
+
+        return as_dict
 
 def init_db():
     # CREATE table

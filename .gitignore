@@ -1,3 +1,6 @@
 .env
 __pycache__
 .vscode
+erlang_solutions.asc
+ntnue
+rabbitmq-signing-key-public.asc
