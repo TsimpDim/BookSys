@@ -9,7 +9,7 @@ connection = pika.BlockingConnection(
 
 channel = connection.channel()
 
-channel.queue_delete(queue='rpc_queue') ## <!> REMOVE LATER
+# channel.queue_delete(queue='rpc_queue') ## <!> REMOVE LATER
 channel.queue_declare(queue='rpc_queue')
 
 ### CUSTOM
